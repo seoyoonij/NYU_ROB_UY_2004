@@ -4,6 +4,7 @@ from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64MultiArray
 import numpy as np
 import time
+# import math
 from collections import deque
 import signal
 
@@ -13,8 +14,8 @@ JOINT_NAME_LEAD = "leg_front_r_3"
 ####
 ####
 KP = 1.000000  # YOUR KP VALUE
-KI = 0.001001 # YOUR KI VALUE
-KD = 0.100000  # YOUR KD VALUE
+KI = 0.000000 # YOUR KI VALUE
+KD = 0.080000  # YOUR KD VALUE
 ####
 ####
 LOOP_RATE = 200  # Hz
