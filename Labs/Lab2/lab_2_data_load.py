@@ -32,21 +32,39 @@ def plot_leg_path(data_dictionary):
     z_ee_f =end_effector_position_f[:,2]
 
 
-    plt.plot(x_ee_f,z_ee_f)
+    plt.figure(figsize=(8,5))
+    plt.plot(x_ee_f, y_ee_f)
     plt.title('End Effector trajectory')
     plt.xlabel('EE X(m)')
-    plt.ylabel('EE Z(m)')
-    plt.show()
+    plt.ylabel('EE Y(m)')
+    plt.ylim(0, 0.20)
+    #plt.show()
+    plt.savefig("2_ee_xy_trajectory.png")
+    plt.close()
 
-    plt.plot(time_stamp_list,z_ee_f )
-    plt.title('End Effector Z vs Time')
-    plt.xlabel('Time(s)')
-    plt.ylabel('EE Z (m)')
-    plt.show()
+    # plt.figure(figsize=(8,5))
+    # plt.plot(time_stamp_list, x_ee_f)
+    # plt.title('End Effector trajectory')
+    # plt.xlabel('Time(s)')
+    # plt.ylabel('EE X(m)')
+    # #plt.show()
+    # plt.savefig("2_ee_xt_trajectory.png")
+    # plt.close()
+
+    # plt.figure(figsize=(8,5))
+    # plt.plot(time_stamp_list,z_ee_f )
+    # plt.title('End Effector Z vs Time')
+    # plt.xlabel('Time(s)')
+    # plt.ylabel('EE Z (m)')
+    # plt.ylim(0, -0.2)
+    # #plt.show()
+    # plt.savefig("2_ee_zt_trajectory.png")
+    # plt.close()
 
 
 
 ##### MAIN ######
-data_loader = DataLoader('./lab_2_datab.pkl')
+
+data_loader = DataLoader('/home/pi/team_say/NYU_ROB_UY_2004/Labs/Lab2/NYU_ROB_UY_2004/Labs/Lab2/lab_2_data.pkl')
 data_dictionary = data_loader.load()
 plot_leg_path(data_dictionary)

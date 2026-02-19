@@ -53,8 +53,8 @@ class ForwardKinematics(Node):
         self.data_dictionary['theta3_b'].append(theta3_b)
         self.data_dictionary['end_effector_position_f'].append(end_effector_position_f)
         self.data_dictionary['end_effector_position_b'].append(end_effector_position_b)
-        with open(self.filename, 'wb') as file_handle:
-            pickle.dump(self.data_dictionary, file_handle)
+        # with open(self.filename, 'wb') as file_handle:
+        #     pickle.dump(self.data_dictionary, file_handle)
 
     def publish_zero_gains(self):
         self.kp_publisher.publish(Float64MultiArray(data=[0.0] * 12))
@@ -120,25 +120,22 @@ class ForwardKinematics(Node):
     def forward_kinematics_f(self, theta1, theta2, theta3):
 
         # T_0_1 (base_link to leg_front_l_1)
-        T_0_1 = self.translation(0.07500, 0.05, 0) 
-        joint0_1 = self.rotation_x(theta1) @ self.rotation_y(theta2) @ self.rotation_z(theta3)
+        T_0_1 = self.translation(0.07500, 0.05, 0) @ self.rotation_y(theta1)
 
         # T_1_2 (leg_front_l_1 to leg_front_l_2)
         ## TODO: Implement the transformation matrix from leg_front_l_1 to leg_front_l_2
-        T_1_2 = self.translation(0, 0.03, 0) @ self.rotation_z(math.pi/2)
-        joint_1_2 = self.rotation_x(theta1) @ self.rotation_y(theta2) @ self.rotation_z(theta3)
+        T_1_2 = self.translation(0, 0.03, 0) @ self.rotation_z(math.pi/2) @ self.rotation_y(theta2)
         
         # T_2_3 (leg_front_l_2 to leg_front_l_3)
         ## TODO: Implement the transformation matrix from leg_front_l_2 to leg_front_l_3
-        T_2_3 = self.translation(0, 0.08, -0.06) @ self.rotation_z(-math.pi/2)
-        joint_2_3 = self.rotation_x(theta1) @ self.rotation_y(theta2) @ self.rotation_z(theta3)
+        T_2_3 = self.translation(0, 0.08, -0.06) @ self.rotation_z(-math.pi/2) @ self.rotation_y(theta3)
 
         # T_3_ee (leg_front_l_3 to end-effector)
         ## TODO: Implement the transformation matrix from leg_front_l_3 to end effector
         T_3_ee = self.translation(0.10, 0.02, 0) 
 
         # TODO: Compute the final transformation. T_0_ee is the multiplication of the previous transformation matrices
-        T_0_ee = np.linalg.multi_dot([T_0_1, joint0_1, T_1_2, joint_1_2, T_2_3, joint_2_3, T_3_ee])
+        T_0_ee = np.linalg.multi_dot([T_0_1, T_1_2, T_2_3, T_3_ee])
 
         # TODO: Extract the end-effector position. The end effector position is a 3x1 vector (not in homogenous coordinates)
         end_effector_position = np.array(T_0_ee[:3,3])
@@ -147,9 +144,26 @@ class ForwardKinematics(Node):
 
     # FK for back left leg
     def forward_kinematics_b(self, theta1, theta2, theta3):
+         # T_0_1 (base_link to leg_front_l_1)
+        T_0_1 = self.translation(-0.07500, 0.05, 0) @ self.rotation_y(theta1)
+
+        # T_1_2 (leg_front_l_1 to leg_front_l_2)
+        ## TODO: Implement the transformation matrix from leg_front_l_1 to leg_front_l_2
+        T_1_2 = self.translation(0, 0.03, 0) @ self.rotation_z(math.pi/2) @ self.rotation_y(theta2)
+        
+        # T_2_3 (leg_front_l_2 to leg_front_l_3)
+        ## TODO: Implement the transformation matrix from leg_front_l_2 to leg_front_l_3
+        T_2_3 = self.translation(0, 0.08, -0.06) @ self.rotation_z(-math.pi/2) @ self.rotation_y(theta3)
+
+        # T_3_ee (leg_front_l_3 to end-effector)
+        ## TODO: Implement the transformation matrix from leg_front_l_3 to end effector
+        T_3_ee = self.translation(0.10, 0.02, 0) 
+
+        # TODO: Compute the final transformation. T_0_ee is the multiplication of the previous transformation matrices
+        T_0_ee = np.linalg.multi_dot([T_0_1, T_1_2, T_2_3, T_3_ee])
 
         ## TODO: Implement the FK for the back left leg, similar to forward_kinematics_f
-        end_effector_position = np.array([0,0,0])
+        end_effector_position = np.array(T_0_ee[:3,3])
 
         return end_effector_position
 
@@ -159,13 +173,22 @@ class ForwardKinematics(Node):
         if self.joint_positions is not None:
             # Joint angles
             theta1_f = self.joint_positions[0] + 0.04
-            theta2_f = self.joint_positions[1] + 0
-            theta3_f = self.joint_positions[2] + 0.63
-            theta1_b = self.joint_positions[3] + 0
-            theta2_b = self.joint_positions[4] + 0
-            theta3_b = self.joint_positions[5] + 0
+            theta2_f = self.joint_positions[1] - 0.03
+            theta3_f = self.joint_positions[2] + 0.70
+            theta1_b = self.joint_positions[3] + 0.06 -0.02
+            theta2_b = self.joint_positions[4] + 0.01-0.06
+            theta3_b = self.joint_positions[5] + 0.69 +0.01
             end_effector_position_f = self.forward_kinematics_f(theta1_f, theta2_f, theta3_f)
             end_effector_position_b = self.forward_kinematics_b(theta1_b, theta2_b, theta3_b)
+            
+            feet_distance = math.sqrt((end_effector_position_f[0] - end_effector_position_b[0])**2 + (end_effector_position_f[1] - end_effector_position_b[1])**2 + (end_effector_position_f[2] - end_effector_position_b[2])**2)
+
+            foot_radius = 0.015
+            threshold = 0.02
+            collision_threshold = threshold + 2*(foot_radius)
+
+            if (feet_distance <= collision_threshold):
+                sound.play()
             
             time_stamp = time.time() - self.start_time
             self.log_data(time_stamp, theta1_f, theta2_f, theta3_f, theta1_b, theta2_b, theta3_b, end_effector_position_f, end_effector_position_b)
@@ -191,16 +214,33 @@ class ForwardKinematics(Node):
             position.data = end_effector_position_f
             self.position_publisher.publish(position)
             self.get_logger().info(
-                f"End-Effector Position: x={end_effector_position_f[0]:.2f}, y={end_effector_position_f[1]:.2f}, z={end_effector_position_f[2]:.2f}\n"
-                f"End-Effector Position: theta1={theta1_f:.2f}, theta2={theta2_f:.2f}, theta3={theta3_f:.2f}"
+                f"Left-Front End-Effector Position: x={end_effector_position_f[0]:.2f}, y={end_effector_position_f[1]:.2f}, z={end_effector_position_f[2]:.2f}\n"
+                f"Left-Front Thetas: theta1={theta1_f:.2f}, theta2={theta2_f:.2f}, theta3={theta3_f:.2f}\n"
+                f"Left-Back End-Effector Position: x={end_effector_position_b[0]:.2f}, y={end_effector_position_b[1]:.2f}, z={end_effector_position_b[2]:.2f}\n"
+                f"Left-Back Thetas: theta1={theta1_b:.2f}, theta2={theta2_b:.2f}, theta3={theta3_b:.2f}"
 
             )
+
+    # --- ADDED: Save once when node is destroyed ---
+    def destroy_node(self):
+        with open(self.filename, 'wb') as file_handle:
+            pickle.dump(self.data_dictionary, file_handle)
+        super().destroy_node()
+    # --- END ADDED ---
 
 def main(args=None):
     rclpy.init(args=args)
     forward_kinematics = ForwardKinematics()
-    rclpy.spin(forward_kinematics)
+    # rclpy.spin(forward_kinematics)
 
+    ## ADDED FOR SAFE SAVING 
+    try:
+        rclpy.spin(forward_kinematics)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        forward_kinematics.destroy_node()   # ensures file is saved
+        rclpy.shutdown()
 
 if __name__ == "__main__":
     main()
