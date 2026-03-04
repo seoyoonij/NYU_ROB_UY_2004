@@ -90,7 +90,6 @@ class InverseKinematics():
         ]) + lb_ee_offset
 
 
-
         self.ee_triangle_positions = [rf_ee_triangle_positions, lf_ee_triangle_positions, rb_ee_triangle_positions, lb_ee_triangle_positions]
         self.fk_functions = [self.fr_leg_fk, self.fl_leg_fk, self.br_leg_fk, self.bl_leg_fk]
 
@@ -151,34 +150,61 @@ class InverseKinematics():
         return res.x
 
     def interpolate_triangle(self, t, leg_index):
-        half_base_length = 0.05
-        height = 0.09
 
-        if leg_index==0 or leg_index==2:
-            if 0 < t < 4/6:
-                res_x = t/(4/6) * 2*half_base_length
-                res_z = -0.14
-            elif 4/6 <= t < 5/6:
-                res_x = -0.05 + (t-4/6)/(1/6) * half_base_length
-                res_z = -0.14 + (t-4/6)/(1/6) * height
-            else:
-                res_x = 0 + (t-5/6)/(1/6) * half_base_length
-                res_z = -0.09 - (t-5/6)/(1/6) * height
+        # returns position. 
+        # for a specific ee_triangle_positions[leg_index] (e.g. rf_ee_triangle_positions),
+        # compare proportion between:
+        # distance: (rf_ee_triangle_positions[t+1] - rf_ee_triangle_positions[t+1])
+        # time: t out of 1
+
+        if 0 <= t < 1/6:
+            res = self.ee_triangle_positions[leg_index][0] + t/(1/6)*(self.ee_triangle_positions[leg_index][1] - self.ee_triangle_positions[leg_index][0])
+
+        elif 1/6 <= t < 2/6:
+            res = self.ee_triangle_positions[leg_index][1] + t/(1/6)*(self.ee_triangle_positions[leg_index][2] - self.ee_triangle_positions[leg_index][1])
+
+        elif 2/6 <= t < 3/6:
+            res = self.ee_triangle_positions[leg_index][2] + t/(1/6)*(self.ee_triangle_positions[leg_index][3] - self.ee_triangle_positions[leg_index][2])
+
+        elif 3/6 <= t < 4/6:
+            res = self.ee_triangle_positions[leg_index][3] + t/(1/6)*(self.ee_triangle_positions[leg_index][4] - self.ee_triangle_positions[leg_index][3])
+          
+        elif 4/6 <= t < 5/6:
+            res = self.ee_triangle_positions[leg_index][4] + t/(1/6)*(self.ee_triangle_positions[leg_index][5] - self.ee_triangle_positions[leg_index][4])
+        
+        else:
+            res = self.ee_triangle_positions[leg_index][5] + t/(1/6)*(self.ee_triangle_positions[leg_index][0] - self.ee_triangle_positions[leg_index][5])
+          
+        return res
+    
+        # half_base_length = 0.05
+        # height = 0.09
+
+        # if leg_index==0 or leg_index==2:
+        #     if 0 < t < 4/6:
+        #         res_x = 0.05+ t/(4/6) * 2*half_base_length
+        #         res_z = -0.14
+        #     elif 4/6 <= t < 5/6:
+        #         res_x = -0.05 + (t-4/6)/(1/6) * half_base_length
+        #         res_z = -0.14 + (t-4/6)/(1/6) * height
+        #     else:
+        #         res_x = 0 + (t-5/6)/(1/6) * half_base_length
+        #         res_z = -0.09 - (t-5/6)/(1/6) * height
             
-        if leg_index==1 or leg_index==3:
-            if 0 < t < 1/6:
-                res_x = t/(1/6) * half_base_length/2
-                res_z = -0.14
-            elif 1/6 <= t < 2/6:
-                res_x = -0.05 + (t-1/6)/(1/6) * half_base_length
-                res_z = -0.14 + (t-1/6)/(1/6) * height
-            elif 2/6 <= t < 3/6:
-                res_x = 0 + (t-2/6)/(1/6) * half_base_length
-                res_z = -0.09 - (t-2/6)/(1/6) * height
-            else:
-                res_x = (t-4/6)/(3/6) * 1.5*half_base_length
-                res_z = -0.14
-        return [res_x, 0, res_z]
+        # if leg_index==1 or leg_index==3:
+        #     if 0 < t < 1/6:
+        #         res_x = t/(1/6) * half_base_length/2
+        #         res_z = -0.14
+        #     elif 1/6 <= t < 2/6:
+        #         res_x = -0.05 + (t-1/6)/(1/6) * half_base_length
+        #         res_z = -0.14 + (t-1/6)/(1/6) * height
+        #     elif 2/6 <= t < 3/6:
+        #         res_x = 0 + (t-2/6)/(1/6) * half_base_length
+        #         res_z = -0.09 - (t-2/6)/(1/6) * height
+        #     else:
+        #         res_x = (t-4/6)/(3/6) * 1.5*half_base_length
+        #         res_z = -0.14
+        # return [res_x, 0, res_z]
 
     def cache_target_joint_positions(self):
         # Calculate and store the target joint positions for a cycle and all 4 legs
