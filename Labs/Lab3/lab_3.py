@@ -72,7 +72,42 @@ class InverseKinematics(Node):
         liftoff_position = np.array([-0.05,0,-0.14])
         mid_swing_position = np.array([0,0,-0.05])
         
-        ## trotting
+        # ## trotting
+        # # TODO: Implement each leg’s trajectory in the trotting gait.
+        # rf_ee_offset = np.array([0.06, -0.09, 0])
+        # rf_ee_triangle_positions = np.array([
+        #     ################################################################################################
+        #     # TODO: Implement the trotting gait
+        #     ################################################################################################
+        #     touch_down_position, stand_position_1, stand_position_2, stand_position_3, liftoff_position, mid_swing_position
+        # ]) + rf_ee_offset
+        
+        # lf_ee_offset = np.array([0.06, 0.09, 0])
+        # lf_ee_triangle_positions = np.array([
+        #     ################################################################################################
+        #     # TODO: Implement the trotting gait
+        #     ################################################################################################
+        #     stand_position_3, liftoff_position, mid_swing_position, touch_down_position, stand_position_1, stand_position_2
+        # ]) + lf_ee_offset
+        
+        # rb_ee_offset = np.array([-0.11, -0.09, 0])
+        # rb_ee_triangle_positions = np.array([
+        #     ################################################################################################
+        #     # TODO: Implement the trotting gait
+        #     ################################################################################################
+        #     stand_position_3, liftoff_position, mid_swing_position, touch_down_position, stand_position_1, stand_position_2
+        # ]) + rb_ee_offset
+        
+        # lb_ee_offset = np.array([-0.11, 0.09, 0])
+        # lb_ee_triangle_positions = np.array([
+        #     ################################################################################################
+        #     # TODO: Implement the trotting gait
+        #     ################################################################################################
+        #     touch_down_position, stand_position_1, stand_position_2, stand_position_3, liftoff_position, mid_swing_position
+
+        # ]) + lb_ee_offset
+
+        ## gallop
         # TODO: Implement each leg’s trajectory in the trotting gait.
         rf_ee_offset = np.array([0.06, -0.09, 0])
         rf_ee_triangle_positions = np.array([
@@ -87,7 +122,7 @@ class InverseKinematics(Node):
             ################################################################################################
             # TODO: Implement the trotting gait
             ################################################################################################
-            stand_position_3, liftoff_position, mid_swing_position, touch_down_position, stand_position_1, stand_position_2
+            touch_down_position, stand_position_1, stand_position_2, stand_position_3, liftoff_position, mid_swing_position
         ]) + lf_ee_offset
         
         rb_ee_offset = np.array([-0.11, -0.09, 0])
@@ -95,15 +130,15 @@ class InverseKinematics(Node):
             ################################################################################################
             # TODO: Implement the trotting gait
             ################################################################################################
-            stand_position_3, liftoff_position, mid_swing_position, touch_down_position, stand_position_1, stand_position_2
-        ]) + rb_ee_offset
-        
+            stand_position_1, stand_position_2, stand_position_3, liftoff_position, mid_swing_position, touch_down_position
+        ]) + lf_ee_offset
+
         lb_ee_offset = np.array([-0.11, 0.09, 0])
         lb_ee_triangle_positions = np.array([
             ################################################################################################
             # TODO: Implement the trotting gait
             ################################################################################################
-            touch_down_position, stand_position_1, stand_position_2, stand_position_3, liftoff_position, mid_swing_position
+           stand_position_1, stand_position_2, stand_position_3, liftoff_position, mid_swing_position, touch_down_position
 
         ]) + lb_ee_offset
 
