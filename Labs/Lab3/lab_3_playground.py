@@ -161,22 +161,22 @@ class InverseKinematics():
             res = self.ee_triangle_positions[leg_index][0] + t/(1/6)*(self.ee_triangle_positions[leg_index][1] - self.ee_triangle_positions[leg_index][0])
 
         elif 1/6 <= t < 2/6:
-            res = self.ee_triangle_positions[leg_index][1] + t/(1/6)*(self.ee_triangle_positions[leg_index][2] - self.ee_triangle_positions[leg_index][1])
+            res = self.ee_triangle_positions[leg_index][1] + (t-1/6)/(1/6)*(self.ee_triangle_positions[leg_index][2] - self.ee_triangle_positions[leg_index][1])
 
         elif 2/6 <= t < 3/6:
-            res = self.ee_triangle_positions[leg_index][2] + t/(1/6)*(self.ee_triangle_positions[leg_index][3] - self.ee_triangle_positions[leg_index][2])
+            res = self.ee_triangle_positions[leg_index][2] + (t-2/6)/(1/6)*(self.ee_triangle_positions[leg_index][3] - self.ee_triangle_positions[leg_index][2])
 
         elif 3/6 <= t < 4/6:
-            res = self.ee_triangle_positions[leg_index][3] + t/(1/6)*(self.ee_triangle_positions[leg_index][4] - self.ee_triangle_positions[leg_index][3])
+            res = self.ee_triangle_positions[leg_index][3] + (t-3/6)/(1/6)*(self.ee_triangle_positions[leg_index][4] - self.ee_triangle_positions[leg_index][3])
           
         elif 4/6 <= t < 5/6:
-            res = self.ee_triangle_positions[leg_index][4] + t/(1/6)*(self.ee_triangle_positions[leg_index][5] - self.ee_triangle_positions[leg_index][4])
+            res = self.ee_triangle_positions[leg_index][4] + (t-4/6)/(1/6)*(self.ee_triangle_positions[leg_index][5] - self.ee_triangle_positions[leg_index][4])
         
         else:
-            res = self.ee_triangle_positions[leg_index][5] + t/(1/6)*(self.ee_triangle_positions[leg_index][0] - self.ee_triangle_positions[leg_index][5])
+            res = self.ee_triangle_positions[leg_index][5] + (t-5/6)/(1/6)*(self.ee_triangle_positions[leg_index][0] - self.ee_triangle_positions[leg_index][5])
           
         return res
-    
+
         # half_base_length = 0.05
         # height = 0.09
 
@@ -214,7 +214,7 @@ class InverseKinematics():
             target_joint_positions_cache.append([])
             target_ee_cache.append([])
             target_joint_positions = [0] * 3
-            for t in np.arange(0, 1, 0.02):
+            for t in np.arange(0, 1.02, 0.02):
                 target_ee = self.interpolate_triangle(t, leg_index)
                 target_joint_positions = self.inverse_kinematics_single_leg(target_ee, leg_index, initial_guess=target_joint_positions)
                 target_joint_positions_cache[leg_index].append(target_joint_positions)
