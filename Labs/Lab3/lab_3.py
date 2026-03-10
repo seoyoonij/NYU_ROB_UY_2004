@@ -68,7 +68,7 @@ class InverseKinematics(Node):
         touch_down_position = np.array([0.05,0,-0.14])
         stand_position_1 = np.array([0.025,0,-0.14])
         stand_position_2 = np.array([0,0,-0.14])
-        stand_position_3 = np.array([-0.025,-0.14])
+        stand_position_3 = np.array([-0.025,0, -0.14])
         liftoff_position = np.array([-0.05,0,-0.14])
         mid_swing_position = np.array([0,0,-0.05])
         
@@ -108,38 +108,25 @@ class InverseKinematics(Node):
         # ]) + lb_ee_offset
 
         ## gallop
-        # TODO: Implement each leg’s trajectory in the trotting gait.
         rf_ee_offset = np.array([0.06, -0.09, 0])
         rf_ee_triangle_positions = np.array([
-            ################################################################################################
-            # TODO: Implement the trotting gait
-            ################################################################################################
-            touch_down_position, stand_position_1, stand_position_2, stand_position_3, liftoff_position, mid_swing_position
+            stand_position_1, stand_position_2, stand_position_3, liftoff_position, mid_swing_position, touch_down_position
         ]) + rf_ee_offset
-        
+
         lf_ee_offset = np.array([0.06, 0.09, 0])
         lf_ee_triangle_positions = np.array([
-            ################################################################################################
-            # TODO: Implement the trotting gait
-            ################################################################################################
-            touch_down_position, stand_position_1, stand_position_2, stand_position_3, liftoff_position, mid_swing_position
+            stand_position_1, stand_position_2, stand_position_3, liftoff_position, mid_swing_position, touch_down_position
+
         ]) + lf_ee_offset
-        
+
         rb_ee_offset = np.array([-0.11, -0.09, 0])
         rb_ee_triangle_positions = np.array([
-            ################################################################################################
-            # TODO: Implement the trotting gait
-            ################################################################################################
-            stand_position_1, stand_position_2, stand_position_3, liftoff_position, mid_swing_position, touch_down_position
-        ]) + lf_ee_offset
+           touch_down_position, stand_position_1, stand_position_2, stand_position_3, liftoff_position, mid_swing_position
+        ]) + rb_ee_offset
 
         lb_ee_offset = np.array([-0.11, 0.09, 0])
         lb_ee_triangle_positions = np.array([
-            ################################################################################################
-            # TODO: Implement the trotting gait
-            ################################################################################################
-           stand_position_1, stand_position_2, stand_position_3, liftoff_position, mid_swing_position, touch_down_position
-
+            touch_down_position, stand_position_1, stand_position_2, stand_position_3, liftoff_position, mid_swing_position
         ]) + lb_ee_offset
 
 
@@ -152,7 +139,7 @@ class InverseKinematics(Node):
 
 
         self.pd_timer_period = 1.0 / 200  # 200 Hz
-        self.ik_timer_period = 1.0 / 100   # 10 Hz
+        self.ik_timer_period = 1.0 / 100   # 30 Hz
         self.pd_timer = self.create_timer(self.pd_timer_period, self.pd_timer_callback)
         self.ik_timer = self.create_timer(self.ik_timer_period, self.ik_timer_callback)
 
