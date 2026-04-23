@@ -1,0 +1,90 @@
+# ROS2 Controller Configuration for Active Posture Stabilization
+
+controller_manager:
+  ros__parameters:
+    update_rate: 1000  # Hz
+
+    forward_command_controller:
+      type: forward_command_controller/ForwardCommandController
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+    
+    imu_sensor_broadcaster:
+      type: imu_sensor_broadcaster/IMUSensorBroadcaster
+
+forward_command_controller:
+  ros__parameters:
+    joints:
+      - leg_front_r_1
+      - leg_front_r_2
+      - leg_front_r_3
+      - leg_front_l_1
+      - leg_front_l_2
+      - leg_front_l_3
+      - leg_back_r_1
+      - leg_back_r_2
+      - leg_back_r_3
+      - leg_back_l_1
+      - leg_back_l_2
+      - leg_back_l_3
+    interface_name: position
+
+joint_state_broadcaster:
+  ros__parameters:
+    joints:
+      - leg_front_r_1
+      - leg_front_r_2
+      - leg_front_r_3
+      - leg_front_l_1
+      - leg_front_l_2
+      - leg_front_l_3
+      - leg_back_r_1
+      - leg_back_r_2
+      - leg_back_r_3
+      - leg_back_l_1
+      - leg_back_l_2
+      - leg_back_l_3
+    interface_name: position
+
+imu_sensor_broadcaster:
+  ros__parameters:
+    frame_id: base_link
+    sensor_name: imu_sensor
+
+# PID Controller Gains for Posture Stabilization
+# Tune these values based on your robot's response
+posture_controller:
+  ros__parameters:
+    # PID gains for roll stabilization
+    roll_pid:
+      kp: 0.5  # Proportional gain
+      ki: 0.01  # Integral gain
+      kd: 0.1  # Derivative gain
+      max_integral: 0.5  # Anti-windup limit
+      
+    # PID gains for pitch stabilization
+    pitch_pid:
+      kp: 0.5
+      ki: 0.01
+      kd: 0.1
+      max_integral: 0.5
+    
+    # Target orientation (radians)
+    target_roll: 0.0
+    target_pitch: 0.0
+    
+    # Control loop parameters
+    control_frequency: 100  # Hz
+    
+    # Robot geometry (meters)
+    robot_geometry:
+      front_leg_x_offset: 0.075   # From Lab3 FK
+      back_leg_x_offset: -0.075
+      right_leg_y_offset: -0.0835  # For right front leg
+      left_leg_y_offset: 0.0835    # For left front leg
+      
+      # Default standing foot position relative to body
+      default_foot_z: -0.14  # Vertical position (height)
+      default_foot_x: 0.0    # Forward/back offset
+      default_foot_y: 0.0    # Lateral offset (relative to hip)
